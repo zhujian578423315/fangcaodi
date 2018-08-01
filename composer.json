@@ -15,7 +15,7 @@
   },
   "autoload": {
     "psr-4": {
-      "ButcherClub\\": "src/"
+    "FangCaoDi\\": "src/"
     }
   },
   "minimum-stability": "stable"
