@@ -30,6 +30,7 @@ trait CommonTrait
         }
         if (!isset($storeConfigs[$store_id])){
             $this->error('Store config not found!');
+            exit();
         }
             return [$store_id,$storeConfigs[$store_id]];
     }

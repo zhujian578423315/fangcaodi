@@ -6,6 +6,7 @@ use App\Leyao\Contracts\Commerce\Models\Order\OrderInterface;
 use App\Models\Commerce\Order\Order;
 use Carbon\Carbon;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Log;
 
 class FangCaoDiController extends Controller
 {
@@ -28,14 +29,18 @@ class FangCaoDiController extends Controller
     {
         $orders = Order::where('store_id', $this->store->id)
             ->whereDate('created_at', $this->date)
-            ->where('state',OrderInterface::STATE_FULFILLED)
+            ->where('state', OrderInterface::STATE_FULFILLED)
             ->get();
         $contents_array = array();
         foreach ($orders as $order) {
-            if ($order->items_total == 0){
+            if ($order->items_total == 0) {
                 continue;
             }
-            array_push($contents_array, $this->contents($order));
+            try {
+                array_push($contents_array, $this->contents($order));
+            } catch (\Exception $e) {
+                Log::info('订单上传失败，订单号'.$order->id.' error:'.$e->getMessage());
+            }
         }
         if (count($contents_array) == 0) {
             return $this->noOrderContent();
@@ -75,7 +80,7 @@ class FangCaoDiController extends Controller
                 $this->shop_info['tillid'],
                 $this->date->format('Y/m/d'),
                 '0000',
-                's'.$this->date->format('Ymd').'0',
+                's' . $this->date->format('Ymd') . '0',
                 $this->shop_info['plu'],
                 self::VIPCODE,
                 '0.00',
@@ -92,13 +97,13 @@ class FangCaoDiController extends Controller
     protected function docnoGenerate($id)
     {
         $remain_num = 9 - strlen($id);
-        return 'S'.implode(array_fill(0,$remain_num,0),'').$id;
+        return 'S' . implode(array_fill(0, $remain_num, 0), '') . $id;
     }
 
 
     protected function priceFormate($price)
     {
-        return sprintf('%0.2f',abs((float)$price));
+        return sprintf('%0.2f', abs((float)$price));
     }
 
 }
