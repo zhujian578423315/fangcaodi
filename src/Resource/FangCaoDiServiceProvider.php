@@ -40,7 +40,6 @@ class FangCaoDiServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->singleton('fangCaoDi', function ($app) {
-            return new FangCaoDiController();
         });
     }
 
